@@ -15,4 +15,4 @@ font tags). I didn't know how to avoid them and thought one extra is
 better than one missing. Chatgpt didn't know either, except for
 km lengths of code that eventually maybe could have worked.
 
-Mikael Wahlgren mail@ridax.se
+Mikael Wahlgren
