@@ -23,7 +23,7 @@ cards:
         data %}<pre style="font-family: monospace; line-height:1.2;"><font
         color="blue"><b>Snitt|  Tid  |  00 |  15 |  30 |  45
 
-        -------------------------------------</b></font> 
+        -----+-------+-----+-----+-----+-----</b></font> 
 
         {% for i in range(current_hour, 24) %}{% set prices = [data[i*4].price,
         data[i*4+1].price, data[i*4+2].price, data[i*4+3].price] %}{{ '%4.0f' %
@@ -61,10 +61,8 @@ cards:
         states('sensor.growatt_inverter_time_' ~ k ~ '_mode_read') %}{% if
         grott_mode == 'Grid First' %}<font color="springgreen">{% elif
         grott_mode == 'Battery First' %}<font color="red">{% endif %}{% endif
-        %}{% endif %}{% endfor %}{% if i == current_hour and minute_slot <=
-        current_minute < minute_slot + 15 %}<b><i>{{ '%3.0f' % (prices[j]*100)
-        }}</i></b>{% else %}{{ '%3.0f' % (prices[j]*100) }}{% endif
-        %}</font></font>{% if not loop.last %} | {% endif %}{% endfor %}
+        %}{% endif %}{% endfor %}{{ '%3.0f' % (prices[j]*100) }}</font></font>{%
+        if not loop.last %} | {% endif %}{% endfor %}
 
         {% endfor %}{% endif %}</pre> {% else %}Ingen data tillgänglig{% endif
         %}
