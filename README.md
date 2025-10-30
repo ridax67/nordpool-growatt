@@ -18,6 +18,7 @@ better than one missing. Chatgpt didn't know either, except for
 km lengths of code that eventually maybe could have worked.
 
 To install it you need to include or copy a file into your 
-configuration.yaml file and create a manual 
+configuration.yaml file and create a manual card in ha and
+paste the yaml code into it.
 
 Mikael Wahlgren
