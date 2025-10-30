@@ -22,7 +22,7 @@ configuration.yaml file and create a manual card in ha and
 paste the yaml code into it.
 
 Then you need to create a helper in HA Settings->Helper (2nd from top usually)
-and click on Helper and click Create helpe amd select Input boolean and name it
+and click on Helper and click Create helpe and select Input boolean and name it
 'show_table'
 
 Mikael Wahlgren
