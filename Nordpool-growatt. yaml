@@ -1,0 +1,119 @@
+type: custom:stack-in-card
+mode: vertical
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: markdown
+        content: "## NordPool"
+      - type: entities
+        entities:
+          - entity: input_boolean.show_table
+            name: Tabell
+            icon: mdi:align-vertical-bottom
+            secondary_info: none
+  - type: conditional
+    conditions:
+      - entity: input_boolean.show_table
+        state: "on"
+    card:
+      type: markdown
+      content: >
+        {% set current_hour = now().hour %} {% set current_minute = now().minute
+        %}{% set data = state_attr('sensor.electricity_prices','data') %} {% if
+        data %}<pre style="font-family: monospace; line-height:1.2;"><font
+        color="blue"><b>Snitt|  Tid  |  00 |  15 |  30 |  45
+
+        -------------------------------------</b></font> 
+
+        {% for i in range(current_hour, 24) %}{% set prices = [data[i*4].price,
+        data[i*4+1].price, data[i*4+2].price, data[i*4+3].price] %}{{ '%4.0f' %
+        (prices[0]*25 + prices[1]*25 + prices[2]*25 + prices[3]*25) }} | {{
+        '%02i:00' % i }} | {% for j in range(4) %}{% set minute_slot = j*15 %}{%
+        set t = '%02d:%02d' % (i, minute_slot) %}<font color="gray">{% for k in
+        range(10) %}{% if states('sensor.growatt_inverter_time_' ~ k ~
+        '_active_read') == 'Enabled' %}{% set grott_begin =
+        states('sensor.growatt_inverter_time_' ~ k ~ '_begin_read') %}{% set
+        grott_end = states('sensor.growatt_inverter_time_' ~ k ~ '_end_read')
+        %}{% if grott_begin <= t < grott_end or (grott_end < grott_begin and (t
+        >= grott_begin or t < grott_end)) %}{% set grott_mode =
+        states('sensor.growatt_inverter_time_' ~ k ~ '_mode_read') %}{% if
+        grott_mode == 'Grid First' %}<font color="springgreen">{% elif
+        grott_mode == 'Battery First' %}<font color="red">{% endif %}{% endif
+        %}{% endif %}{% endfor %}{% if i == current_hour and minute_slot <=
+        current_minute < minute_slot + 15 %}<b><i>{{ '%3.0f' % (prices[j]*100)
+        }}</i></b>{% else %}{{ '%3.0f' % (prices[j]*100) }}{% endif
+        %}</font></font>{% if not loop.last %} | {% endif %}{% endfor %}
+
+        {% endfor %}
+
+        {% if data|length > 191 %}{% for i in range(0, 24) %}{% set prices =
+        [data[96+i*4].price, data[96+i*4+1].price, data[96+i*4+2].price,
+        data[96+i*4+3].price] %}{{ '%4.0f' % (prices[0]*25 + prices[1]*25 +
+        prices[2]*25 + prices[3]*25) }} | {{ '%02i:00' % i }} | {% for j in
+        range(4) %}{% set minute_slot = j*15 %}{% set t = '%02d:%02d' % (i,
+        minute_slot) %}<font color="gray">{% for k in range(10) %}{% if
+        states('sensor.growatt_inverter_time_' ~ k ~ '_active_read') ==
+        'Enabled' %}{% set grott_begin = states('sensor.growatt_inverter_time_'
+        ~ k ~ '_begin_read') %}{% set grott_end =
+        states('sensor.growatt_inverter_time_' ~ k ~ '_end_read') %}{% if
+        grott_begin <= t < grott_end or (grott_end < grott_begin and (t >=
+        grott_begin or t < grott_end)) %}{% set grott_mode =
+        states('sensor.growatt_inverter_time_' ~ k ~ '_mode_read') %}{% if
+        grott_mode == 'Grid First' %}<font color="springgreen">{% elif
+        grott_mode == 'Battery First' %}<font color="red">{% endif %}{% endif
+        %}{% endif %}{% endfor %}{% if i == current_hour and minute_slot <=
+        current_minute < minute_slot + 15 %}<b><i>{{ '%3.0f' % (prices[j]*100)
+        }}</i></b>{% else %}{{ '%3.0f' % (prices[j]*100) }}{% endif
+        %}</font></font>{% if not loop.last %} | {% endif %}{% endfor %}
+
+        {% endfor %}{% endif %}</pre> {% else %}Ingen data tillgänglig{% endif
+        %}
+  - type: conditional
+    conditions:
+      - entity: input_boolean.show_table
+        state: "off"
+    card:
+      type: custom:apexcharts-card
+      experimental:
+        color_threshold: true
+      header:
+        show: true
+        title: ""
+        show_states: true
+        colorize_states: true
+      graph_span: 48h
+      span:
+        end: day
+        offset: +1d
+      now:
+        show: true
+        label: Now
+      series:
+        - entity: sensor.electricity_prices
+          type: column
+          show:
+            extremas: true
+            in_header: before_now
+          float_precision: 3
+          data_generator: >-
+            return entity.attributes.data.map((start,index)=>[new
+            Date(start.start).getTime(), start.price]);
+          color_threshold:
+            - value: 0
+              color: "#186ddc"
+            - value: 0.15
+              color: "#04822e"
+            - value: 0.2
+              color: "#12A141"
+            - value: 0.25
+              color: "#79B92C"
+            - value: 0.3
+              color: "#C4D81D"
+            - value: 0.35
+              color: "#F3DC0C"
+            - value: 0.4
+              color: "#EFA51E"
+            - value: 0.45
+              color: "#E76821"
+            - value: 0.5
+              color: "#DC182F"
